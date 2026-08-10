@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>EasyPlusAddressReply</value>
+  </data>
+  <data name="RibbonEnabledTip" xml:space="preserve">
+    <value>Enable or disable EasyPlusAddressReply. When enabled, replies use the plus-address that received the message whenever it can be determined safely.</value>
+  </data>
+  <data name="RibbonSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="RibbonSettingsTip" xml:space="preserve">
+    <value>Configure address detection and warnings.</value>
+  </data>
+  <data name="RibbonDiagnose" xml:space="preserve">
+    <value>Check message</value>
+  </data>
+  <data name="RibbonDiagnoseTip" xml:space="preserve">
+    <value>Show which plus-address would be used for the selected message.</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>EasyPlusAddressReply settings</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="MessageSelectOne" xml:space="preserve">
+    <value>Select exactly one email message first.</value>
+  </data>
+  <data name="MessageAmbiguous" xml:space="preserve">
+    <value>More than one matching plus-address was found and Outlook's From address was left unchanged.</value>
+  </data>
+  <data name="MessageApplyFailed" xml:space="preserve">
+    <value>EasyPlusAddressReply could not set the From address. Outlook's normal From address was left unchanged.</value>
+  </data>
+  <data name="MessageDiagnosisFailed" xml:space="preserve">
+    <value>The selected message could not be diagnosed.</value>
+  </data>
+  <data name="MessageBoxTitle" xml:space="preserve">
+    <value>EasyPlusAddressReply</value>
+  </data>
+  <data name="DiagnosticTitle" xml:space="preserve">
+    <value>EasyPlusAddressReply diagnosis</value>
+  </data>
+  <data name="DiagnosticBaseAddresses" xml:space="preserve">
+    <value>Outlook account addresses considered:</value>
+  </data>
+  <data name="DiagnosticRecipientCandidates" xml:space="preserve">
+    <value>Matching plus-addresses in Outlook recipients:</value>
+  </data>
+  <data name="DiagnosticHeaderCandidates" xml:space="preserve">
+    <value>Matching plus-addresses in delivery headers:</value>
+  </data>
+  <data name="DiagnosticSelectedIdentity" xml:space="preserve">
+    <value>Selected sender identity:</value>
+  </data>
+  <data name="DiagnosticNone" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="DiagnosticPrivacyNote" xml:space="preserve">
+    <value>Addresses are redacted. Raw headers are never displayed, logged, or stored.</value>
+  </data>
+  <data name="DiagnosticNotMail" xml:space="preserve">
+    <value>The selected item is not an email message.</value>
+  </data>
+  <data name="DiagnosticNoAccountAddresses" xml:space="preserve">
+    <value>Outlook exposed no usable SMTP account address.</value>
+  </data>
+  <data name="DiagnosticRecipientResolved" xml:space="preserve">
+    <value>A unique match was found in Outlook's recipient collection.</value>
+  </data>
+  <data name="DiagnosticHeaderResolved" xml:space="preserve">
+    <value>A unique match was found in the message's delivery headers.</value>
+  </data>
+  <data name="DiagnosticAmbiguityResolved" xml:space="preserve">
+    <value>Multiple recipients matched; a higher-priority delivery header identified the receiving address.</value>
+  </data>
+  <data name="DiagnosticAmbiguous" xml:space="preserve">
+    <value>Multiple valid plus-addresses remain, so the add-in deliberately did not guess.</value>
+  </data>
+  <data name="DiagnosticNoMatch" xml:space="preserve">
+    <value>No matching plus-address was found; Outlook's normal From address will remain unchanged.</value>
+  </data>
+  <data name="RibbonToolsGroup" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="RibbonStatusGroup" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="RibbonConfigurationGroup" xml:space="preserve">
+    <value>Configuration</value>
+  </data>
+  <data name="SettingsHeading" xml:space="preserve">
+    <value>Reply behavior</value>
+  </data>
+  <data name="SettingsUseDeliveryHeaders" xml:space="preserve">
+    <value>Use delivery headers to resolve the receiving address</value>
+  </data>
+  <data name="SettingsUseDeliveryHeadersDescription" xml:space="preserve">
+    <value>If Outlook's recipient list does not identify one unique plus-address, also inspect delivery headers such as Delivered-To and X-Original-To. Recommended.</value>
+  </data>
+  <data name="SettingsWarnAmbiguous" xml:space="preserve">
+    <value>Warn when multiple plus-addresses match</value>
+  </data>
+  <data name="SettingsWarnAmbiguousDescription" xml:space="preserve">
+    <value>Show a warning if more than one valid plus-address remains after all enabled checks. When disabled, the add-in stays silent and leaves Outlook's normal From address unchanged; it never guesses.</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="RibbonEnabledOn" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="RibbonEnabledOff" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="StateOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="StateOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="SettingsVersion" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+</root>

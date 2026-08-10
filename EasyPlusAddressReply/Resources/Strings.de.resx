@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>EasyPlusAddressReply</value>
+  </data>
+  <data name="RibbonEnabledTip" xml:space="preserve">
+    <value>EasyPlusAddressReply aktivieren oder deaktivieren. Wenn aktiviert, verwendet das Add-In beim Antworten die Plusadresse, über die die Nachricht empfangen wurde, sofern sie sicher ermittelt werden kann.</value>
+  </data>
+  <data name="RibbonSettings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="RibbonSettingsTip" xml:space="preserve">
+    <value>Erkennung und Warnungen konfigurieren.</value>
+  </data>
+  <data name="RibbonDiagnose" xml:space="preserve">
+    <value>Nachricht prüfen</value>
+  </data>
+  <data name="RibbonDiagnoseTip" xml:space="preserve">
+    <value>Zeigt, welche Plusadresse für die ausgewählte Nachricht verwendet würde.</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>EasyPlusAddressReply – Einstellungen</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="MessageSelectOne" xml:space="preserve">
+    <value>Bitte zuerst genau eine E-Mail-Nachricht auswählen.</value>
+  </data>
+  <data name="MessageAmbiguous" xml:space="preserve">
+    <value>Es wurden mehrere passende Plusadressen gefunden. Die Absenderadresse von Outlook wurde daher nicht geändert.</value>
+  </data>
+  <data name="MessageApplyFailed" xml:space="preserve">
+    <value>EasyPlusAddressReply konnte die Absenderadresse nicht setzen. Die normale Outlook-Absenderadresse bleibt unverändert.</value>
+  </data>
+  <data name="MessageDiagnosisFailed" xml:space="preserve">
+    <value>Die ausgewählte Nachricht konnte nicht geprüft werden.</value>
+  </data>
+  <data name="MessageBoxTitle" xml:space="preserve">
+    <value>EasyPlusAddressReply</value>
+  </data>
+  <data name="DiagnosticTitle" xml:space="preserve">
+    <value>EasyPlusAddressReply – Diagnose</value>
+  </data>
+  <data name="DiagnosticBaseAddresses" xml:space="preserve">
+    <value>Berücksichtigte Outlook-Kontoadressen:</value>
+  </data>
+  <data name="DiagnosticRecipientCandidates" xml:space="preserve">
+    <value>Passende Plusadressen in den Outlook-Empfängern:</value>
+  </data>
+  <data name="DiagnosticHeaderCandidates" xml:space="preserve">
+    <value>Passende Plusadressen in den Zustell-Headern:</value>
+  </data>
+  <data name="DiagnosticSelectedIdentity" xml:space="preserve">
+    <value>Gewählte Absenderidentität:</value>
+  </data>
+  <data name="DiagnosticNone" xml:space="preserve">
+    <value>(keine)</value>
+  </data>
+  <data name="DiagnosticPrivacyNote" xml:space="preserve">
+    <value>Adressen werden maskiert. Roh-Header werden weder angezeigt noch protokolliert oder gespeichert.</value>
+  </data>
+  <data name="DiagnosticNotMail" xml:space="preserve">
+    <value>Das ausgewählte Element ist keine E-Mail-Nachricht.</value>
+  </data>
+  <data name="DiagnosticNoAccountAddresses" xml:space="preserve">
+    <value>Outlook hat keine verwendbare SMTP-Kontoadresse bereitgestellt.</value>
+  </data>
+  <data name="DiagnosticRecipientResolved" xml:space="preserve">
+    <value>In der Outlook-Empfängerliste wurde genau eine passende Adresse gefunden.</value>
+  </data>
+  <data name="DiagnosticHeaderResolved" xml:space="preserve">
+    <value>In den Zustell-Headern der Nachricht wurde genau eine passende Adresse gefunden.</value>
+  </data>
+  <data name="DiagnosticAmbiguityResolved" xml:space="preserve">
+    <value>Mehrere Empfänger passten; ein höher priorisierter Zustell-Header hat die tatsächlich empfangende Adresse bestimmt.</value>
+  </data>
+  <data name="DiagnosticAmbiguous" xml:space="preserve">
+    <value>Es bleiben mehrere gültige Plusadressen übrig. Das Add-In rät daher bewusst nicht.</value>
+  </data>
+  <data name="DiagnosticNoMatch" xml:space="preserve">
+    <value>Keine passende Plusadresse gefunden; die normale Outlook-Absenderadresse bleibt unverändert.</value>
+  </data>
+  <data name="RibbonToolsGroup" xml:space="preserve">
+    <value>Werkzeuge</value>
+  </data>
+  <data name="RibbonStatusGroup" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="RibbonConfigurationGroup" xml:space="preserve">
+    <value>Konfiguration</value>
+  </data>
+  <data name="SettingsHeading" xml:space="preserve">
+    <value>Antwortverhalten</value>
+  </data>
+  <data name="SettingsUseDeliveryHeaders" xml:space="preserve">
+    <value>Zustell-Header zur Ermittlung der Empfängeradresse verwenden</value>
+  </data>
+  <data name="SettingsUseDeliveryHeadersDescription" xml:space="preserve">
+    <value>Wenn die Outlook-Empfängerliste keine eindeutige Plusadresse liefert, werden zusätzlich Zustell-Header wie Delivered-To und X-Original-To geprüft. Empfohlen.</value>
+  </data>
+  <data name="SettingsWarnAmbiguous" xml:space="preserve">
+    <value>Warnen, wenn mehrere Plusadressen passen</value>
+  </data>
+  <data name="SettingsWarnAmbiguousDescription" xml:space="preserve">
+    <value>Zeigt eine Warnung an, wenn nach allen aktivierten Prüfungen mehrere gültige Plusadressen übrig bleiben. Ist dies ausgeschaltet, bleibt das Add-In still und lässt die normale Outlook-Absenderadresse unverändert; es rät niemals.</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="RibbonEnabledOn" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="RibbonEnabledOff" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="StateOn" xml:space="preserve">
+    <value>Ein</value>
+  </data>
+  <data name="StateOff" xml:space="preserve">
+    <value>Aus</value>
+  </data>
+  <data name="SettingsVersion" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+</root>
