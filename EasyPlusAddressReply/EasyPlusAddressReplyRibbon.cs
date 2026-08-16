@@ -67,14 +67,20 @@ namespace EasyPlusAddressReply
             if (ribbonUi == null)
                 return;
 
+            // Only record the ribbon here. Invalidating a control from inside onLoad makes Office
+            // re-enter the getters while the ribbon is still being built, and the add-in may not be
+            // constructed yet at that point. ThisAddIn_Startup invalidates once it is ready, and a
+            // ribbon loaded after that already queries the getters against the loaded settings.
             RibbonUis.Add(ribbonUi);
-
-            // Office can build this ribbon before ThisAddIn_Startup has loaded the saved settings,
-            // in which case the toggle would keep showing the default state until the next change.
-            Invalidate(ribbonUi);
         }
 
         public string GetLabel(Office.IRibbonControl control)
+        {
+            try { return GetLabelCore(control); }
+            catch { return Strings.Get("AppName"); }
+        }
+
+        private static string GetLabelCore(Office.IRibbonControl control)
         {
             switch (control?.Id)
             {
@@ -94,12 +100,19 @@ namespace EasyPlusAddressReply
 
         public string GetScreenTip(Office.IRibbonControl control)
         {
-            switch (control?.Id)
+            try
             {
-                case "EparEnabled": return Strings.Get("RibbonEnabledTip");
-                case "EparSettings": return Strings.Get("RibbonSettingsTip");
-                case "EparDiagnose": return Strings.Get("RibbonDiagnoseTip");
-                default: return Strings.Get("AppName");
+                switch (control?.Id)
+                {
+                    case "EparEnabled": return Strings.Get("RibbonEnabledTip");
+                    case "EparSettings": return Strings.Get("RibbonSettingsTip");
+                    case "EparDiagnose": return Strings.Get("RibbonDiagnoseTip");
+                    default: return Strings.Get("AppName");
+                }
+            }
+            catch
+            {
+                return string.Empty;
             }
         }
 
@@ -110,22 +123,23 @@ namespace EasyPlusAddressReply
 
         public object GetProductImage(Office.IRibbonControl control)
         {
-            return RibbonImages.GetProductIcon();
+            try { return RibbonImages.GetProductIcon(); }
+            catch { return null; }
         }
 
         public void OnToggleEnabled(Office.IRibbonControl control, bool pressed)
         {
-            Globals.ThisAddIn.Service?.SetEnabled(pressed);
+            CurrentService?.SetEnabled(pressed);
         }
 
         public void OnSettings(Office.IRibbonControl control)
         {
-            Globals.ThisAddIn.Service?.ShowSettings();
+            CurrentService?.ShowSettings();
         }
 
         public void OnDiagnose(Office.IRibbonControl control)
         {
-            Globals.ThisAddIn.Service?.DiagnoseSelectedMessage();
+            CurrentService?.DiagnoseSelectedMessage();
         }
 
         internal static void ReleaseRibbon()
@@ -157,9 +171,24 @@ namespace EasyPlusAddressReply
             }
         }
 
+        /// <summary>
+        /// Office can invoke ribbon callbacks before VSTO has finished creating the add-in, so
+        /// Globals.ThisAddIn is not guaranteed to be set. Every callback goes through here, because
+        /// an exception escaping into Office makes it discard the entire custom tab.
+        /// </summary>
+        private static EasyPlusAddressReplyService CurrentService
+        {
+            get
+            {
+                try { return Globals.ThisAddIn?.Service; }
+                catch { return null; }
+            }
+        }
+
         private static bool GetEnabledState()
         {
-            return Globals.ThisAddIn.Service?.Settings.Enabled ?? true;
+            try { return CurrentService?.Settings.Enabled ?? true; }
+            catch { return true; }
         }
 
         /// <summary>
