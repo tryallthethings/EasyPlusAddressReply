@@ -10,12 +10,9 @@ namespace EasyPlusAddressReply
     {
         private readonly Outlook.Application _application;
         private readonly Outlook.ApplicationEvents_11_Event _applicationEvents;
-        private readonly Outlook.Explorers _explorers;
-        private readonly Outlook.ExplorersEvents_Event _explorersEvents;
         private readonly SettingsStore _store = new SettingsStore();
         private readonly AliasDetector _detector;
         private readonly Dictionary<long, MailItemHook> _mailHooks = new Dictionary<long, MailItemHook>();
-        private readonly Dictionary<long, ExplorerHook> _explorerHooks = new Dictionary<long, ExplorerHook>();
         private bool _disposed;
 
         public EasyPlusAddressReplySettings Settings { get; private set; }
@@ -24,23 +21,16 @@ namespace EasyPlusAddressReply
         {
             _application = application ?? throw new ArgumentNullException(nameof(application));
             _applicationEvents = (Outlook.ApplicationEvents_11_Event)_application;
-            _explorers = _application.Explorers;
-            _explorersEvents = (Outlook.ExplorersEvents_Event)_explorers;
             _detector = new AliasDetector(_application);
             Settings = _store.Load();
         }
 
         public void Start()
         {
+            // ItemLoad fires whenever Outlook loads an item into memory, which covers every message
+            // that can be replied to from here on. Only items already loaded before this point need
+            // to be picked up separately, so the window and its selection are swept once.
             _applicationEvents.ItemLoad += OnItemLoad;
-            _explorersEvents.NewExplorer += OnNewExplorer;
-
-            try
-            {
-                for (int i = 1; i <= _explorers.Count; i++)
-                    TryHookExplorer(_explorers[i]);
-            }
-            catch { }
 
             try
             {
@@ -49,31 +39,24 @@ namespace EasyPlusAddressReply
                     TryHookMailItem(inspector.CurrentItem);
             }
             catch { }
+
+            try
+            {
+                Outlook.Explorer explorer = _application.ActiveExplorer();
+                if (explorer != null)
+                {
+                    Outlook.Selection selection = explorer.Selection;
+                    for (int i = 1; i <= selection.Count; i++)
+                        TryHookMailItem(selection[i]);
+                }
+            }
+            catch { }
         }
 
         private void OnItemLoad(object item)
         {
             // ItemLoad fires before most item properties are available. Attach only the event sink here.
             TryHookMailItem(item);
-        }
-
-        private void OnNewExplorer(Outlook.Explorer explorer)
-        {
-            TryHookExplorer(explorer);
-        }
-
-        internal void HookExplorerSelection(Outlook.Explorer explorer)
-        {
-            if (explorer == null)
-                return;
-
-            try
-            {
-                Outlook.Selection selection = explorer.Selection;
-                for (int i = 1; i <= selection.Count; i++)
-                    TryHookMailItem(selection[i]);
-            }
-            catch { }
         }
 
         private void TryHookMailItem(object item)
@@ -92,30 +75,9 @@ namespace EasyPlusAddressReply
             catch { }
         }
 
-        private void TryHookExplorer(Outlook.Explorer explorer)
-        {
-            if (_disposed || explorer == null)
-                return;
-
-            long id;
-            try { id = ComIdentity(explorer); }
-            catch { return; }
-
-            if (_explorerHooks.ContainsKey(id))
-                return;
-
-            try { _explorerHooks[id] = new ExplorerHook(explorer, id, this); }
-            catch { }
-        }
-
         internal void ForgetMailHook(long identity)
         {
             _mailHooks.Remove(identity);
-        }
-
-        internal void ForgetExplorerHook(long identity)
-        {
-            _explorerHooks.Remove(identity);
         }
 
         internal void HandleReply(Outlook.MailItem original, Outlook.MailItem reply)
@@ -267,15 +229,11 @@ namespace EasyPlusAddressReply
             _disposed = true;
 
             try { _applicationEvents.ItemLoad -= OnItemLoad; } catch { }
-            try { _explorersEvents.NewExplorer -= OnNewExplorer; } catch { }
 
             foreach (var hook in _mailHooks.Values)
                 hook.Detach();
-            foreach (var hook in _explorerHooks.Values)
-                hook.Detach();
 
             _mailHooks.Clear();
-            _explorerHooks.Clear();
         }
     }
 }

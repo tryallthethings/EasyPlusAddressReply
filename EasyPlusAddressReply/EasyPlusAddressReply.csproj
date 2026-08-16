@@ -221,7 +221,6 @@
     <Compile Include="EasyPlusAddressReplyRibbon.cs" />
     <Compile Include="EasyPlusAddressReplyService.cs" />
     <Compile Include="EasyPlusAddressReplySettings.cs" />
-    <Compile Include="ExplorerHook.cs" />
     <Compile Include="MailItemHook.cs" />
     <Compile Include="Localization.cs" />
     <Compile Include="OptionsWindow.xaml.cs">
