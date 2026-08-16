@@ -97,26 +97,20 @@ namespace EasyPlusAddressReply
                     try
                     {
                         File.Replace(tempPath, _path, null, true);
-                        tempPath = null;
                     }
-                    catch (PlatformNotSupportedException)
+                    catch (Exception ex) when (ex is PlatformNotSupportedException || ex is IOException)
                     {
+                        // File systems that cannot do an atomic replace still need the setting saved.
                         File.Delete(_path);
                         File.Move(tempPath, _path);
-                        tempPath = null;
-                    }
-                    catch (IOException)
-                    {
-                        File.Delete(_path);
-                        File.Move(tempPath, _path);
-                        tempPath = null;
                     }
                 }
                 else
                 {
                     File.Move(tempPath, _path);
-                    tempPath = null;
                 }
+
+                tempPath = null;
             }
             finally
             {

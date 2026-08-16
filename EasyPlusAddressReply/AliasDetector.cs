@@ -94,8 +94,9 @@ namespace EasyPlusAddressReply
 
         // Conservative Internet-address matcher for ordinary plus-addressing. The final address is
         // validated again by NormalizeAddress before it can become a sender identity.
+        // Note: no inline (?x) option. The pattern contains '#' and must never be read as commented.
         private static readonly Regex PlusAddressRegex = new Regex(
-            @"(?ix)(?<![a-z0-9.!#$%&'*+/=?^_`{|}~-])" +
+            @"(?<![a-z0-9.!#$%&'*+/=?^_`{|}~-])" +
             @"([a-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}\+[a-z0-9.!#$%&'*+/=?^_`{|}~-]{1,64}@[a-z0-9.-]{1,253}\.[a-z]{2,63})" +
             @"(?![a-z0-9._%+-])",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant,
@@ -104,11 +105,6 @@ namespace EasyPlusAddressReply
         public AliasDetector(Outlook.Application application)
         {
             _application = application ?? throw new ArgumentNullException(nameof(application));
-        }
-
-        public DetectionResult Detect(Outlook.MailItem original)
-        {
-            return Detect(original, true);
         }
 
         public DetectionResult Detect(Outlook.MailItem original, bool useDeliveryHeaderFallback)
@@ -342,7 +338,9 @@ namespace EasyPlusAddressReply
 
             foreach (var rawLine in raw.Replace("\r\n", "\n").Replace('\r', '\n').Split('\n'))
             {
-                if ((rawLine.StartsWith(" ") || rawLine.StartsWith("\t")) && currentName != null)
+                // Ordinal by construction: header folding is defined in terms of raw bytes,
+                // so culture-aware StringComparison must not take part in this decision.
+                if (rawLine.Length > 0 && (rawLine[0] == ' ' || rawLine[0] == '\t') && currentName != null)
                 {
                     currentValue.Append(' ').Append(rawLine.Trim());
                     continue;
@@ -419,9 +417,16 @@ namespace EasyPlusAddressReply
             if (at <= 0 || at != address.IndexOf('@') || at > 64 || at >= address.Length - 1)
                 return null;
 
+            // Ordinal comparisons only: this is a security check on untrusted input, and
+            // culture-aware matching can ignore characters such as soft hyphens.
             string domain = address.Substring(at + 1);
-            if (domain.Length > 253 || domain.StartsWith(".") || domain.EndsWith(".") || domain.Contains(".."))
+            if (domain.Length > 253 ||
+                domain[0] == '.' ||
+                domain[domain.Length - 1] == '.' ||
+                domain.IndexOf("..", StringComparison.Ordinal) >= 0)
+            {
                 return null;
+            }
 
             return address.ToLowerInvariant();
         }

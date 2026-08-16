@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -9,7 +10,9 @@ namespace EasyPlusAddressReply
     [ComVisible(true)]
     public sealed class EasyPlusAddressReplyRibbon : Office.IRibbonExtensibility
     {
-        private static Office.IRibbonUI _ribbonUi;
+        // Outlook loads this ribbon once per context (the Explorer and every read-mail Inspector),
+        // so a single reference would leave the toggle stale in every window but the newest one.
+        private static readonly List<Office.IRibbonUI> RibbonUis = new List<Office.IRibbonUI>();
 
         public string GetCustomUI(string ribbonID)
         {
@@ -61,7 +64,14 @@ namespace EasyPlusAddressReply
 
         public void OnLoad(Office.IRibbonUI ribbonUi)
         {
-            _ribbonUi = ribbonUi;
+            if (ribbonUi == null)
+                return;
+
+            RibbonUis.Add(ribbonUi);
+
+            // Office can build this ribbon before ThisAddIn_Startup has loaded the saved settings,
+            // in which case the toggle would keep showing the default state until the next change.
+            Invalidate(ribbonUi);
         }
 
         public string GetLabel(Office.IRibbonControl control)
@@ -120,14 +130,31 @@ namespace EasyPlusAddressReply
 
         internal static void ReleaseRibbon()
         {
-            _ribbonUi = null;
+            RibbonUis.Clear();
             RibbonImages.Dispose();
         }
 
         internal static void InvalidateState()
         {
-            try { _ribbonUi?.InvalidateControl("EparEnabled"); }
-            catch { }
+            // Iterate backwards so ribbons belonging to closed windows can be dropped as they fail.
+            for (int i = RibbonUis.Count - 1; i >= 0; i--)
+            {
+                if (!Invalidate(RibbonUis[i]))
+                    RibbonUis.RemoveAt(i);
+            }
+        }
+
+        private static bool Invalidate(Office.IRibbonUI ribbonUi)
+        {
+            try
+            {
+                ribbonUi.InvalidateControl("EparEnabled");
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private static bool GetEnabledState()
