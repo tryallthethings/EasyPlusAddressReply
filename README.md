@@ -1,244 +1,104 @@
 # EasyPlusAddressReply
 
-EasyPlusAddressReply is a small Outlook for Windows add-in that automatically selects the **plus-address that actually received a message** when you reply.
+An add-in for classic Outlook on Windows that replies from the plus-address a message was actually sent to.
 
-If mail arrives at:
+If mail arrives at `name+shop@example.com`, **Reply** and **Reply All** normally go out as `name@example.com` and the recipient loses track of which address they wrote to. EasyPlusAddressReply sets the From address back to `name+shop@example.com` automatically.
 
-```text
-name+shop@example.com
-```
-
-EasyPlusAddressReply makes a normal **Reply** or **Reply All** use:
-
-```text
-From: name+shop@example.com
-```
-
-instead of falling back to:
-
-```text
-From: name@example.com
-```
-
-This is intended for ordinary IMAP/SMTP accounts where the SMTP server already accepts plus-addresses as sender addresses.
-
-## Features
-
-- Automatically selects the received plus-address for **Reply** and **Reply All**
-- Uses the SMTP address of configured Outlook accounts as the trusted base identity
-- Can use delivery headers such as `Delivered-To` and `X-Original-To` when Outlook's recipient list is ambiguous
-- Never guesses when more than one valid plus-address remains
-- Dedicated Outlook Ribbon tab
-- English and German UI
-- No telemetry, analytics, update checks, or external network calls
-- Diagnostics redact email addresses and do not display or persist raw message headers
+It needs an account whose SMTP server accepts the plus-address as a sender address — typically an ordinary IMAP/SMTP mailbox.
 
 ## Requirements
 
 - Windows
-- Classic Outlook for Windows (the traditional desktop Outlook application)
-- Outlook 2021 or a Microsoft 365 desktop Outlook installation that supports VSTO add-ins
+- **Classic** Outlook for Windows (the traditional desktop application)
 - .NET Framework 4.8
-- Microsoft Visual Studio Tools for Office Runtime
-- An IMAP/SMTP account whose SMTP server permits sending from the relevant plus-address
+- Microsoft Visual Studio 2010 Tools for Office Runtime — the installer adds this if it is missing
+- A mail account whose SMTP server permits sending from the plus-address
 
-EasyPlusAddressReply is a VSTO add-in and does **not** run in the new Outlook for Windows.
+### Outlook versions
+
+**Tested:** classic Outlook for Microsoft 365 (Office 2021 Pro Plus). This is the only configuration the add-in has been verified on.
+
+**Untested, but expected to work:** Outlook 2013, 2016 and 2019. The ribbon uses the Office 2010 customUI schema and the project builds against the Office 2013 interop assemblies, so nothing in it should require a newer Outlook — but nobody has confirmed this. Reports welcome.
+
+**Not supported:** the *new* Outlook for Windows, Outlook on the web, and Outlook for Mac. This is a VSTO add-in, and [Microsoft does not support VSTO or COM add-ins in new Outlook](https://learn.microsoft.com/en-us/office/dev/add-ins/outlook/one-outlook).
+
+## Installation
+
+1. Close Outlook.
+2. Download the release archive and extract it.
+3. Run `setup.exe` from the extracted folder. Windows may ask you to confirm that you trust the publisher.
+4. Start Outlook. An **EasyPlusAddressReply** tab appears in the ribbon.
+
+Keep the extracted folder until the installation has finished. `setup.exe` is the recommended entry point because, unlike opening the `.vsto` file directly, it also installs the prerequisites.
+
+The add-in does not check for updates. To update, download the newer archive and run its `setup.exe` again.
+
+To uninstall, open the list of installed programs in Windows Settings or Control Panel, select **EasyPlusAddressReply** and choose Uninstall. Office add-ins cannot be removed from Outlook's own add-in list.
+
+## Using it
+
+The ribbon tab has three controls:
+
+| Control | What it does |
+|---|---|
+| **Enabled / Disabled** | Master switch. When disabled, Outlook's normal From address is used. |
+| **Settings** | Opens the settings window. |
+| **Check message** | Explains which plus-address would be chosen for the message you have selected. |
+
+Once enabled, there is nothing to do — replies pick up the right address on their own. Use **Check message** when a reply did not use the address you expected.
+
+## How the address is chosen
+
+There is no alias list to maintain. The add-in reads the SMTP address of each account configured in Outlook and accepts a candidate only if stripping its plus-tag yields one of those addresses:
+
+```text
+name+shop@example.com  →  name@example.com  ✓ matches a configured account
+```
+
+It looks first at Outlook's recipient list for the message. If that does not produce exactly one match, it can also read delivery headers such as `Delivered-To` and `X-Original-To`.
+
+**It never guesses.** If more than one valid plus-address remains, the From address is left untouched. And because a candidate must reduce to an address that is already configured in Outlook, no incoming message can talk the add-in into sending from an unrelated address by putting one in a header.
 
 ## Settings
 
-### Use delivery headers to resolve the receiving address
+**Use delivery headers to resolve the receiving address** — when Outlook's recipient list is ambiguous, also inspect delivery headers. Enabled by default; recommended. Messages delivered via BCC often carry the receiving address only in these headers.
 
-When Outlook's recipient collection does not identify one unique plus-address, EasyPlusAddressReply can inspect delivery headers such as `Delivered-To` and `X-Original-To`.
+**Warn when multiple plus-addresses match** — show a warning when the add-in declines to choose. With this off, the add-in stays silent and simply leaves the From address alone.
 
-This is enabled by default and is recommended.
+The master on/off switch lives on the ribbon rather than being duplicated here.
 
-### Warn when multiple plus-addresses match
+The interface follows Outlook's own display language and is available in English and German.
 
-When more than one valid plus-address remains after all enabled checks, EasyPlusAddressReply can display a warning.
+## Privacy
 
-If the warning is disabled, the add-in remains silent and leaves Outlook's normal From address unchanged. It never chooses an ambiguous address.
+Everything happens locally. The add-in does not send telemetry, contact any server, check for updates, or upload message data. It does not read message bodies.
 
-The master **Enabled / Disabled** control is on the EasyPlusAddressReply Ribbon tab rather than being duplicated in the Settings window.
+The only things stored on disk are the two Boolean settings above, in `%LocalAppData%\EasyPlusAddressReply\settings.xml`. No addresses, headers or logs are written anywhere.
 
-## How address selection works
-
-EasyPlusAddressReply does not keep a manually configured alias list.
-
-For each configured Outlook account, it obtains the account's SMTP address, for example:
-
-```text
-name@example.com
-```
-
-A candidate sender is accepted only when removing its plus-tag produces one of those configured account addresses:
-
-```text
-name+shop@example.com
-        ↓
-name@example.com
-```
-
-A message cannot therefore make the add-in send from an unrelated address simply by putting that address into a mail header.
-
-## Privacy and security
-
-EasyPlusAddressReply is designed to process mail data locally.
-
-It does not:
-
-- send telemetry
-- contact an update server
-- upload message data
-- read message bodies
-- persist raw message headers
-- persist recipient or sender addresses
-- write diagnostic logs containing email addresses
-
-The only stored preferences are Boolean application settings.
-
-Raw message headers, when needed, are processed in memory. Header input is size-limited, regular-expression matching uses execution timeouts, and sender addresses are independently validated before they are written to an Outlook reply.
-
-The **Check message** diagnostic masks email addresses before displaying them.
-
-## Building from source
-
-### Prerequisites
-
-Install:
-
-- Visual Studio 2022
-- the **Office/SharePoint development** workload
-- .NET Framework 4.8 targeting tools
-- desktop Outlook for Windows
-
-Then open the project in Visual Studio and build the `Release` configuration.
-
-The release output must include the VSTO deployment manifest (`.vsto`), application manifest (`.manifest`), the add-in assembly, and any generated satellite-resource directories such as `de`.
-
-## Versioning
-
-The product version is defined in:
-
-```text
-Properties/AssemblyInfo.cs
-```
-
-For a normal release, keep these values aligned:
-
-```csharp
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: AssemblyInformationalVersion("1.0.0")]
-```
-
-The Settings window displays the informational version.
-
-When creating an MSI, use the same three-part product version in the installer, for example `1.0.0`.
-
-## Packaging with Advanced Installer
-
-A ClickOnce deployment is not required.
-
-Advanced Installer's dedicated **Office Add-In** packaging wizard requires its Professional edition, but a VSTO add-in can also be packaged manually as a normal Windows Installer package. Advanced Installer Freeware can create a Simple Installer project, install files, and create the registry values required by Outlook.
-
-### Recommended x64 package
-
-For 64-bit Outlook:
-
-1. Build EasyPlusAddressReply in `Release`.
-2. Create a **Simple Installer** project in Advanced Installer.
-3. Install the complete required Release output to a directory under `Program Files`, for example:
-
-   ```text
-   [ProgramFiles64Folder]\EasyPlusAddressReply
-   ```
-
-4. Preserve generated subdirectories such as `de`.
-5. Create this registry key in the **64-bit** registry view:
-
-   ```text
-   HKLM\Software\Microsoft\Office\Outlook\Addins\EasyPlusAddressReply
-   ```
-
-6. Add these values:
-
-   | Name | Type | Value |
-   |---|---|---|
-   | `Description` | `REG_SZ` | `Automatically replies from the plus-address that received the message.` |
-   | `FriendlyName` | `REG_SZ` | `EasyPlusAddressReply` |
-   | `LoadBehavior` | `REG_DWORD` | `3` |
-   | `Manifest` | `REG_SZ` | `file:///[APPDIR]EasyPlusAddressReply.vsto\|vstolocal` |
-
-7. Mark the registry component as **64-bit** for a 64-bit Outlook package.
-8. Require or document .NET Framework 4.8 and the Visual Studio Tools for Office Runtime.
-9. Sign the finished MSI with your production code-signing certificate and a timestamp.
-10. Test installation and removal on a clean Windows VM before publishing it.
-
-Do not ship debug `.pdb` files unless you deliberately want to make symbols available.
-
-### 32-bit Outlook
-
-If you want to support both 32-bit and 64-bit Outlook while staying with the simple Freeware workflow, the clearest approach is to publish separate `x86` and `x64` MSI packages so the Outlook registration is written to the correct registry view.
-
-The add-in itself is built as `AnyCPU`; the installer registration is the bitness-sensitive part.
-
-### Upgrades
-
-EasyPlusAddressReply has no built-in updater and does not need one.
-
-For a future release, publish a new MSI with a higher version number and configure the Windows Installer project as a normal major upgrade. Keep the installer's Upgrade Code stable across versions and let the installer authoring tool manage the version-specific Product Code.
-
-## Publishing on GitHub
-
-A release can be kept simple:
-
-1. Commit source code without build output or signing keys.
-2. Tag the release, for example `v1.0.0`.
-3. Create a GitHub Release from that tag.
-4. Attach the signed installer:
-
-   ```text
-   EasyPlusAddressReply-1.0.0-x64.msi
-   ```
-
-5. If supported, also attach:
-
-   ```text
-   EasyPlusAddressReply-1.0.0-x86.msi
-   ```
-
-6. Include concise release notes and the SHA-256 hashes of the installer files.
-
-Do **not** commit PFX/P12 files, certificate passwords, token PINs, private keys, or other signing credentials.
+Message headers are processed in memory only, with a size limit and regular-expression timeouts, and the resulting address is validated independently before it is written to a reply. **Check message** masks addresses before displaying them and never shows raw headers.
 
 ## Troubleshooting
 
-### The UI does not match the source code
+**A reply still used the base address.** Select the original message and use **Check message**. It reports, with addresses masked, whether the recipient list or the delivery headers produced a unique plus-address. The two common outcomes are that no candidate reduced to a configured account address, or that several candidates remained and the add-in declined to guess.
 
-### Reply still uses the base address
+**The ribbon tab is missing.** Check that Outlook has not disabled the add-in: **File → Options → Add-ins**. Note that this is classic Outlook only — the tab will never appear in the new Outlook for Windows.
 
-Use **EasyPlusAddressReply → Check message** on the original message. The diagnostic shows, with addresses redacted, whether Outlook's recipient collection or the delivery headers produced a valid unique plus-address.
+**The reply is rejected when sending.** The add-in only sets the From address; your SMTP server still has to accept the plus-address as a sender. Some providers do not.
 
-## Development notes
+## Building from source
 
-The project intentionally uses:
+Requires Visual Studio 2022 with the **Office/SharePoint development** workload, the .NET Framework 4.8 targeting pack, and desktop Outlook installed. Open the solution and build `Release`.
 
-- VSTO/Outlook PIA event handling for Reply and Reply All
-- RibbonX for the Outlook Ribbon
-- WPF for the Settings UI
-- `.resx` resources for localization
-- local XML storage for the small Boolean preference set
+Note that the project signs its ClickOnce manifests with a specific certificate thumbprint. To build without that certificate, clear `ManifestCertificateThumbprint` in `EasyPlusAddressReply.csproj` or set `SignManifests` to `false`.
 
-RibbonX does not provide a native WinUI-style switch control. The Ribbon therefore uses Outlook's native `toggleButton` control for the master on/off state. The Settings window uses actual switch-style WPF toggle controls.
+Keep `<ApplicationVersion>` in the `.csproj` in step with the version attributes in `Properties/AssemblyInfo.cs`; the settings window displays the latter.
+
+## Technical notes
+
+The project deliberately uses VSTO event handling for Reply and Reply All, RibbonX for the ribbon, WPF for the settings window, `.resx` files for localization, and a small local XML file for preferences.
+
+RibbonX has no native switch control, so the ribbon uses Outlook's own `toggleButton` for the master on/off state; the settings window uses proper switch controls.
 
 ## License
 
-Add a `LICENSE` file before publishing the repository publicly. Choose the license that matches how you want others to use, modify, and redistribute the project.
-
-
-## Technical references
-
-- [Microsoft: Registry entries for VSTO Add-ins](https://learn.microsoft.com/en-us/visualstudio/vsto/registry-entries-for-vsto-add-ins)
-- [Microsoft: Deploying a VSTO solution using Windows Installer](https://learn.microsoft.com/en-us/visualstudio/vsto/deploying-a-vsto-solution-by-using-windows-installer)
-- [Microsoft: VSTO Add-in architecture](https://learn.microsoft.com/en-us/visualstudio/vsto/architecture-of-vsto-add-ins)
-- [Advanced Installer: Office VSTO Add-in deployment](https://www.advancedinstaller.com/office-addin-deployment.html)
+MIT. See [LICENSE](LICENSE).

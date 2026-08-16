@@ -47,7 +47,23 @@ namespace EasyPlusAddressReply
                 smtpAddress
             };
 
-            reply.PropertyAccessor.SetProperties(schemas, values);
+            // SetProperties does not throw on a per-property failure: it returns an array with one
+            // entry per schema name describing the individual results. Ignoring it would let the
+            // reply keep Outlook's original sender while the add-in reported success.
+            ThrowOnPropertyErrors(reply.PropertyAccessor.SetProperties(schemas, values));
+        }
+
+        private static void ThrowOnPropertyErrors(object setPropertiesResult)
+        {
+            // A successful call returns null. Anything else is inspected for reported failures.
+            if (!(setPropertiesResult is Array results))
+                return;
+
+            foreach (var result in results)
+            {
+                if (result is Exception error)
+                    throw new InvalidOperationException("Setting the sender identity failed.", error);
+            }
         }
 
         private static string ValidatePlusSmtpAddress(string smtpAddress)
@@ -66,9 +82,15 @@ namespace EasyPlusAddressReply
             if (at <= 0 || at != value.IndexOf('@') || at > 64 || at >= value.Length - 1)
                 throw new ArgumentException("SMTP address is invalid.", nameof(smtpAddress));
 
+            // Ordinal comparisons only; see the matching note in AliasDetector.NormalizeAddress.
             string domain = value.Substring(at + 1);
-            if (domain.Length > 253 || domain.StartsWith(".") || domain.EndsWith(".") || domain.Contains(".."))
+            if (domain.Length > 253 ||
+                domain[0] == '.' ||
+                domain[domain.Length - 1] == '.' ||
+                domain.IndexOf("..", StringComparison.Ordinal) >= 0)
+            {
                 throw new ArgumentException("SMTP address is invalid.", nameof(smtpAddress));
+            }
 
             try
             {

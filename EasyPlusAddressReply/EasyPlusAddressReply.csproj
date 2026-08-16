@@ -34,11 +34,13 @@
     <PublishUrl>publish\</PublishUrl>
     <InstallUrl />
     <TargetCulture>en</TargetCulture>
+    <!-- Keep in step with Properties\AssemblyInfo.cs and bump deliberately for each release.
+         ClickOnce versions must never go backwards. -->
     <ApplicationVersion>1.0.0.4</ApplicationVersion>
-    <AutoIncrementApplicationRevision>true</AutoIncrementApplicationRevision>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>days</UpdateIntervalUnits>
+    <AutoIncrementApplicationRevision>false</AutoIncrementApplicationRevision>
+    <!-- The add-in is distributed as a downloaded archive, so there is no permanent location to
+         check for updates. Microsoft prescribes "never check for updates" for offline media. -->
+    <UpdateEnabled>false</UpdateEnabled>
     <ProductName>EasyPlusAddressReply</ProductName>
     <PublisherName />
     <SupportUrl />
@@ -249,7 +251,6 @@
     <EmbeddedResource Include="Resources\Strings.de.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <None Include="EasyPlusAddressReply_TemporaryKey.pfx" />
     <Compile Include="SenderIdentity.cs" />
     <Compile Include="ThisAddIn.cs">
       <SubType>Code</SubType>
@@ -264,8 +265,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="icon.png" />
-    <None Include="README.md" />
-    <None Include=".gitignore" />
+    <None Include="icon.pdn" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
