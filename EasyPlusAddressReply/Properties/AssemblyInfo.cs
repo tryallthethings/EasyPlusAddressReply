@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("EasyPlusAddressReply")]
 [assembly: AssemblyDescription("Automatically replies from the plus-address that received a message in classic Outlook for Windows.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("TryAllTheThings")]
 [assembly: AssemblyProduct("EasyPlusAddressReply")]
 [assembly: AssemblyCopyright("Copyright © 2026")]
 [assembly: AssemblyTrademark("")]
@@ -32,7 +32,7 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 // Keep these in step with <ApplicationVersion> in EasyPlusAddressReply.csproj.
-[assembly: AssemblyVersion("1.0.0.4")]
-[assembly: AssemblyFileVersion("1.0.0.4")]
+[assembly: AssemblyVersion("1.1.0.0")]
+[assembly: AssemblyFileVersion("1.1.0.0")]
 [assembly: AssemblyInformationalVersion("1.0.0.4")]
 
